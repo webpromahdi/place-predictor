@@ -16,15 +16,18 @@ from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
 
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score, precision_score, recall_score
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    classification_report,
+    confusion_matrix
+)
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
+
 
 DATASET_PATH = "dataset/Placement_Data_Full_Class.csv"
 MODEL_PATH = "placement_model.pkl"
@@ -35,11 +38,12 @@ REPORT_PATH = "naive_bayes_classification_report.txt"
 def load_and_prepare_data():
     df = pd.read_csv(DATASET_PATH)
 
-    # sl_no is only an ID column.
-    # salary is a post-placement value, so it would cause data leakage.
     df = df.drop(columns=["sl_no", "salary"], errors="ignore")
 
-    df["status"] = df["status"].map({"Placed": 1, "Not Placed": 0})
+    df["status"] = df["status"].map({
+        "Placed": 1,
+        "Not Placed": 0
+    })
 
     X = df.drop("status", axis=1)
     y = df["status"]
@@ -54,23 +58,11 @@ def build_preprocessor(X):
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", StandardScaler(), numerical_cols),
-            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), categorical_cols),
+            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), categorical_cols)
         ]
     )
+
     return preprocessor
-
-
-def evaluate_model(name, pipeline, X_train, X_test, y_train, y_test):
-    pipeline.fit(X_train, y_train)
-    y_pred = pipeline.predict(X_test)
-
-    return {
-        "Model": name,
-        "Accuracy": accuracy_score(y_test, y_pred),
-        "Precision": precision_score(y_test, y_pred, zero_division=0),
-        "Recall": recall_score(y_test, y_pred, zero_division=0),
-        "F1 Score": f1_score(y_test, y_pred, zero_division=0),
-    }, y_pred
 
 
 def main():
@@ -82,57 +74,57 @@ def main():
         y,
         test_size=0.2,
         random_state=42,
-        stratify=y,
+        stratify=y
     )
 
-    models = {
-        "Logistic Regression": LogisticRegression(max_iter=1000, random_state=42),
-        "Decision Tree": DecisionTreeClassifier(random_state=42),
-        "Random Forest": RandomForestClassifier(n_estimators=200, random_state=42),
-        "Support Vector Machine": SVC(probability=True, random_state=42),
-        "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=5),
-        "Naive Bayes": GaussianNB(),
-    }
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("smote", SMOTE(random_state=42)),
+            ("classifier", GaussianNB())
+        ]
+    )
 
-    results = []
-    naive_bayes_pipeline = None
-    naive_bayes_pred = None
+    pipeline.fit(X_train, y_train)
 
-    for name, clf in models.items():
-        pipeline = Pipeline(
-            steps=[
-                ("preprocessor", preprocessor),
-                ("smote", SMOTE(random_state=42)),
-                ("classifier", clf),
-            ]
-        )
+    y_pred = pipeline.predict(X_test)
 
-        result, y_pred = evaluate_model(name, pipeline, X_train, X_test, y_train, y_test)
-        results.append(result)
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
 
-        if name == "Naive Bayes":
-            naive_bayes_pipeline = pipeline
-            naive_bayes_pred = y_pred
+    print("Naive Bayes Model Performance")
+    print("-----------------------------")
+    print("Accuracy:", round(accuracy, 4))
+    print("Precision:", round(precision, 4))
+    print("Recall:", round(recall, 4))
+    print("F1 Score:", round(f1, 4))
+    print()
+    print(classification_report(y_test, y_pred))
 
-    results_df = pd.DataFrame(results).sort_values(by="F1 Score", ascending=False)
-    results_df.to_csv(RESULTS_PATH, index=False)
+    joblib.dump(pipeline, MODEL_PATH)
 
-    # Save final selected model: Naive Bayes
-    joblib.dump(naive_bayes_pipeline, MODEL_PATH)
+    results = pd.DataFrame({
+        "Model": ["Naive Bayes"],
+        "Accuracy": [accuracy],
+        "Precision": [precision],
+        "Recall": [recall],
+        "F1 Score": [f1]
+    })
 
-    with open(REPORT_PATH, "w", encoding="utf-8") as file:
-        file.write("Final Selected Model: Naive Bayes\n")
-        file.write("=================================\n\n")
-        file.write(classification_report(y_test, naive_bayes_pred, target_names=["Not Placed", "Placed"]))
-        file.write("\nConfusion Matrix:\n")
-        file.write(str(confusion_matrix(y_test, naive_bayes_pred)))
+    results.to_csv(RESULTS_PATH, index=False)
 
-    print("Training completed successfully.")
-    print(f"Saved selected model: {MODEL_PATH}")
-    print(f"Saved model comparison: {RESULTS_PATH}")
-    print(f"Saved Naive Bayes report: {REPORT_PATH}")
-    print("\nModel Comparison:")
-    print(results_df.to_string(index=False))
+    with open(REPORT_PATH, "w") as file:
+        file.write("Naive Bayes Classification Report\n")
+        file.write("--------------------------------\n\n")
+        file.write(classification_report(y_test, y_pred))
+        file.write("\n\nConfusion Matrix\n")
+        file.write(str(confusion_matrix(y_test, y_pred)))
+
+    print("Model saved successfully as placement_model.pkl")
+    print("Results saved successfully as model_results.csv")
+    print("Report saved successfully as naive_bayes_classification_report.txt")
 
 
 if __name__ == "__main__":
