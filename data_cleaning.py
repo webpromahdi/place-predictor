@@ -24,7 +24,7 @@ print("All imports successful.")
 
 #load data---->
 
-DATA_PATH = r"C:\Users\DELL\OneDrive\Documents\GitHub\place-predictor\data\Placement_Data_Full_Class.csv"
+DATA_PATH = "../data/raw/Placement_Data_Full_Class.csv"
 
 df = pd.read_csv(DATA_PATH)
 
@@ -44,9 +44,4 @@ df = df.drop(columns=["sl_no", "salary"])
 
 print("\n Dropped 'sl_no' and 'salary' (leakage prevention).")
 print(f"Dataset shape after dropping: {df.shape}")
-CLEAN_PATH = r"C:\Users\DELL\OneDrive\Documents\GitHub\place-predictor\data\cleaned_data.csv"
-
-df.to_csv(CLEAN_PATH, index=False)
-
-print("Cleaned data saved!")
 
