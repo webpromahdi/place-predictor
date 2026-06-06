@@ -79,6 +79,7 @@ Run Streamlit app:
 python -m streamlit run app.py
 ```
 
-## Viva Explanation
+## Project Summary
 
-The system first predicts whether a student is Placed or Not Placed using Naive Bayes. If the student is predicted as Not Placed, the system explains weak factors such as no work experience, low employability test score, low degree percentage, or low MBA percentage. Then it suggests skills needed for placement, such as internship experience, aptitude improvement, communication skill, interview preparation, and portfolio building.
+PlacePredictor is a machine learning-based student placement prediction system. The system predicts whether a student is likely to be Placed or Not Placed using a trained Naive Bayes classification model.The application takes student academic, personal, and employability-related information as input through a Streamlit web interface. After prediction, it displays the placement result, placement probability, and an AI-based explanation.If the student is predicted as Not Placed, the system explains possible weak factors such as no work experience, low employability test score, low degree percentage, low SSC/HSC percentage, or low MBA percentage. It also suggests skills needed to improve placement chances, including internship experience, aptitude improvement, communication skills, interview preparation, CV building, and project work.If the student is predicted as Placed, the system explains the positive factors that supported the prediction and provides further improvement suggestions for better career preparation.
+The project also includes an examiner dashboard that shows model performance, model comparison results, and exploratory data analysis charts.
