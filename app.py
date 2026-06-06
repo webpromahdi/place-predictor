@@ -454,29 +454,33 @@ def main():
                 fig, ax = plt.subplots()
                 sns.countplot(data=df, x="status", ax=ax)
                 st.pyplot(fig)
+                st.caption("This chart shows the number of Placed and Not Placed students in the dataset. It helps identify class imbalance.")
 
             with col2:
                 st.write("Work Experience vs Placement")
                 fig, ax = plt.subplots()
                 sns.countplot(data=df, x="workex", hue="status", ax=ax)
                 st.pyplot(fig)
+                st.caption("This chart compares placement status based on work experience. It helps show whether work experience affects placement chances.")
 
             st.write("Employability Test Score by Placement Status")
             fig, ax = plt.subplots()
             sns.boxplot(data=df, x="status", y="etest_p", ax=ax)
             st.pyplot(fig)
+            st.caption("This boxplot shows employability test score distribution for Placed and Not Placed students. Higher scores may support placement chances.")
 
             st.write("Degree Percentage by Placement Status")
             fig, ax = plt.subplots()
             sns.boxplot(data=df, x="status", y="degree_p", ax=ax)
             st.pyplot(fig)
+            st.caption("This boxplot compares degree percentage between Placed and Not Placed students. It helps understand the role of academic performance.")
 
             st.write("Correlation Heatmap")
             numeric_df = df.drop(columns=["sl_no", "salary"], errors="ignore").select_dtypes(include=["int64", "float64"])
             fig, ax = plt.subplots(figsize=(8, 5))
             sns.heatmap(numeric_df.corr(), annot=True, cmap="coolwarm", ax=ax)
             st.pyplot(fig)
-
+            st.caption("This heatmap shows relationships between numerical features such as SSC, HSC, Degree, Employability Test, MBA percentage, and placement status.")
             st.subheader("Dataset Preview")
             st.dataframe(df.head(), width="stretch")
 
