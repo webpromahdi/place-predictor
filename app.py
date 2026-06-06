@@ -373,11 +373,15 @@ def build_input_form():
 
 
 def main():
+    st.sidebar.image("assets/logo.png", width=180)
+    st.sidebar.title("PlacePredictor")
+    st.sidebar.write("Naive Bayes Placement Prediction")
     st.markdown('<div class="main-title">🎓 PlacePredictor</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="subtitle">AI-powered Student Placement Prediction System using Naive Bayes</div>',
         unsafe_allow_html=True,
     )
+    st.image("assets/banner.png", width="stretch")
     st.markdown(
         """
         <div class="hero-card">
