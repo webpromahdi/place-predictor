@@ -1,0 +1,10 @@
+{
+  "best_params": {
+    "classifier__C": 0.1,
+    "classifier__gamma": "scale",
+    "classifier__kernel": "linear"
+  },
+  "best_cv_f1": 0.9021995464852608,
+  "cv_folds": 5,
+  "scoring": "f1"
+}
