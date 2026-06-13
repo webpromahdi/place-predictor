@@ -1,2 +1,55 @@
-FINAL_DEFINITIVE_BLUEPRINT.md
-TEAM_WORK_DIVISION.md
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local secrets
+.env
+*.env
+
+# Optional: keep results tracked for demo; uncomment to ignore generated artifacts
+# results/models/
+# results/plots/
+# results/metrics/
+# results/predictions/
