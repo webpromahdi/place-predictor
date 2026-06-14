@@ -26,6 +26,7 @@ DATASET_PATH = "dataset/Placement_Data_Full_Class.csv"
 CHARTS_DIR   = Path("charts")
 
 MODELS = {
+    "Random Forest":       "models/random_forest_model.pkl",
     "Logistic Regression": "models/logistic_regression_pipeline.pkl",
     "Decision Tree":       "models/decision_tree_model.pkl",
     "Naive Bayes":         "placement_model.pkl",
@@ -337,7 +338,7 @@ def main():
         help="SHAP explanation uses the Decision Tree model regardless of prediction model."
     )
     st.sidebar.markdown("---")
-    st.sidebar.caption("Team Straw Hat · PlacePredictor · 2025")
+    st.sidebar.caption("Team Straw Hat · PlacePredictor · 2026")
 
     # Header
     st.markdown('<div class="main-title">🎓 PlacePredictor</div>', unsafe_allow_html=True)
@@ -485,6 +486,19 @@ def main():
             plt.close()
 
             st.caption("Blue = champion model. Dashed line = 0.80 F1 threshold.")
+
+            # ── Confusion Matrix per model ──────────────────────────────────
+            st.subheader("Confusion Matrices")
+            cm_models = [m for m in results["Model"]]
+            cm_cols = st.columns(len(cm_models))
+            for col, model_name in zip(cm_cols, cm_models):
+                fname = model_name.lower().replace(" ", "_") + "_confusion_matrix.png"
+                cm_path = CHARTS_DIR / fname
+                with col:
+                    if cm_path.exists():
+                        st.image(str(cm_path), caption=model_name, use_container_width=True)
+                    else:
+                        st.info(f"{model_name}: chart not found")
         else:
             st.warning("No model results available.")
 
@@ -555,10 +569,17 @@ def main():
         if shap_sum.exists():
             st.image(str(shap_sum), caption="Full SHAP summary — all test students", use_container_width=True)
 
+        # KNN confusion matrix (from KNN member)
+        knn_cm = CHARTS_DIR / "knn_confusion_matrix.png"
+        if knn_cm.exists():
+            st.subheader("KNN — Confusion Matrix")
+            st.image(str(knn_cm), caption="K-Nearest Neighbors Confusion Matrix", use_container_width=False)
+
         st.markdown("---")
         st.subheader("Dataset Preview")
         raw = pd.read_csv(DATASET_PATH)
         st.dataframe(raw.head(10), use_container_width=True)
+
 
 
 if __name__ == "__main__":
