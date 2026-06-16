@@ -1,5 +1,5 @@
 # PlacePredictor
-naive_bayes_0112310315
+
 PlacePredictor is a Streamlit-based student placement prediction system. It predicts whether a student is likely to be **Placed** or **Not Placed** using a trained machine learning pipeline.
 
 ## Final Selected Model
@@ -44,19 +44,28 @@ Python, Streamlit, scikit-learn, imbalanced-learn, pandas, matplotlib, seaborn
 ## Project Structure
 
 ```text
-PlacePredictor_Final_Complete_Project/
+place-predictor/
 │
-├── app.py
-├── train_model.py
-├── placement_model.pkl
-├── model_results.csv
-├── naive_bayes_classification_report.txt
+├── data/
+│   └── raw/
+│       └── Placement_Data_Full_Class.csv
+│
+├── notebooks/
+│   └── 01_eda_and_modeling.ipynb
+│
+├── models/
+│   ├── random_forest_model.pkl
+│   ├── logistic_regression_pipeline.pkl
+│   ├── decision_tree_model.pkl
+│   ├── placement_model.pkl
+│   └── svm_tuned.joblib
+│
+├── src/
+│   └── app.py
+│
 ├── requirements.txt
-├── README.md
 ├── .gitignore
-│
-└── dataset/
-    └── Placement_Data_Full_Class.csv
+└── README.md
 ```
 
 ## How to Run
@@ -64,19 +73,13 @@ PlacePredictor_Final_Complete_Project/
 Install dependencies:
 
 ```bash
-python -m pip install -r requirements.txt
-```
-
-Train model:
-
-```bash
-python train_model.py
+pip install -r requirements.txt
 ```
 
 Run Streamlit app:
 
 ```bash
-python -m streamlit run app.py
+streamlit run src/app.py
 ```
 
 ## Project Summary
@@ -197,4 +200,3 @@ The project will include visualizations to better understand the dataset and mod
 - Correlation heatmap
 - Placement rate by category
 - Score distribution boxplots
-main
