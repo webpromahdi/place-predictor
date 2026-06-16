@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 PlacePredictor — Full Streamlit UI
-Run:  streamlit run app.py
+Run:  streamlit run src/app.py
 """
 
 import warnings
