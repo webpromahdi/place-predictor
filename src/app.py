@@ -34,7 +34,7 @@ MODELS = {
 }
 
 # ── Page config ────────────────────────────────────────────────────────────────
-st.set_page_config(page_title="PlacePredictor", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="PlacePredictor", page_icon=None, layout="wide")
 
 # ── CSS ────────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -269,8 +269,8 @@ def rule_explanation(row, prediction, probability):
         if not reasons:
             reasons.append("Overall profile is weaker than placed students.")
             skills.append("Improve work experience, employability score, and interview preparation.")
-        heading = "❌ Why Not Placed?"
-        skill_h = "📌 Skills to Improve"
+        heading = "Why Not Placed?"
+        skill_h = "Skills to Improve"
         summary = f"The model predicted Not Placed. Placement probability: {probability*100:.1f}%."
     else:
         if row["workex"] == "Yes":
@@ -286,8 +286,8 @@ def rule_explanation(row, prediction, probability):
         skills = ["Build a strong CV and LinkedIn profile.",
                   "Improve interview confidence and HR preparation.",
                   "Add certifications relevant to your specialisation."]
-        heading = "✅ Why Placed?"
-        skill_h = "🚀 Further Improvements"
+        heading = "Why Placed?"
+        skill_h = "Further Improvements"
         summary = f"The model predicted Placed. Placement probability: {probability*100:.1f}%."
     return summary, heading, list(dict.fromkeys(reasons)), skill_h, list(dict.fromkeys(skills))
 
@@ -344,7 +344,7 @@ def main():
     st.sidebar.caption("Team Straw Hat · PlacePredictor · 2026")
 
     # Header
-    st.markdown('<div class="main-title">🎓 PlacePredictor</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">PlacePredictor</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="subtitle">AI-Powered Student Placement Prediction System</div>',
         unsafe_allow_html=True,
@@ -360,13 +360,13 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    tab1, tab2, tab3 = st.tabs(["🎯 Student Prediction", "📊 Model Comparison", "🔬 EDA & Charts"])
+    tab1, tab2, tab3 = st.tabs(["Student Prediction", "Model Comparison", "EDA & Charts"])
 
     # ── Tab 1: Prediction ──────────────────────────────────────────────────────
     with tab1:
         input_df = build_form()
 
-        if st.button("🚀 Predict Placement"):
+        if st.button("Predict Placement"):
             model = load_model(model_choice)
             try:
                 pred = model.predict(input_df)[0]
@@ -381,14 +381,14 @@ def main():
             if pred == 1:
                 st.markdown(f"""
                 <div class="result-placed">
-                    <h2>✅ Prediction: Placed</h2>
+                    <h2>Prediction: Placed</h2>
                     <h3>Placement Probability: {prob*100:.1f}%</h3>
                     <p>Model: {model_choice}</p>
                 </div>""", unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                 <div class="result-notplaced">
-                    <h2>❌ Prediction: Not Placed</h2>
+                    <h2>Prediction: Not Placed</h2>
                     <h3>Placement Probability: {prob*100:.1f}%</h3>
                     <p>Model: {model_choice}</p>
                 </div>""", unsafe_allow_html=True)
@@ -397,7 +397,7 @@ def main():
             c1, c2, c3 = st.columns(3)
             c1.metric("Placement Probability", f"{prob*100:.1f}%")
             c2.metric("Prediction Model",      model_choice)
-            c3.metric("Result",                "Placed ✅" if pred == 1 else "Not Placed ❌")
+            c3.metric("Result",                "Placed" if pred == 1 else "Not Placed")
 
             # Probability bar
             fig_prob, ax = plt.subplots(figsize=(7, 1.2))
@@ -414,7 +414,7 @@ def main():
             # SHAP section
             if show_shap:
                 st.markdown("---")
-                st.subheader("🔍 SHAP Explanation (Decision Tree)")
+                st.subheader("SHAP Explanation (Decision Tree)")
                 st.caption("SHAP shows how each feature pushed the prediction toward Placed (+) or Not Placed (-).")
 
                 dt_model = load_model("Decision Tree")
@@ -427,13 +427,13 @@ def main():
                     helps  = [(f, v) for f, v in impact if v > 0][:2]
                     hurts  = [(f, v) for f, v in reversed(impact) if v < 0][:2]
                     if helps:
-                        st.markdown("**📈 Biggest strengths:**")
+                        st.markdown("**Biggest Strengths:**")
                         for f, v in helps:
-                            st.markdown(f'<div class="positive-box">✅ {f}  →  +{v:.3f}</div>', unsafe_allow_html=True)
+                            st.markdown(f'<div class="positive-box">{f} &rarr; +{v:.3f}</div>', unsafe_allow_html=True)
                     if hurts:
-                        st.markdown("**📉 Main weaknesses:**")
+                        st.markdown("**Main Weaknesses:**")
                         for f, v in hurts:
-                            st.markdown(f'<div class="negative-box">❌ {f}  →  {v:.3f}</div>', unsafe_allow_html=True)
+                            st.markdown(f'<div class="negative-box">{f} &rarr; {v:.3f}</div>', unsafe_allow_html=True)
 
                 # Detailed waterfall
                 with st.expander("Show Detailed SHAP Waterfall Chart"):
@@ -446,10 +446,10 @@ def main():
 
             # Rule-based AI Explanation
             st.markdown("---")
-            st.subheader("🤖 AI Explanation")
+            st.subheader("AI Explanation")
             row = input_df.iloc[0]
             summary, heading, reasons, skill_h, skills = rule_explanation(row, pred, prob)
-            st.markdown(f'<div class="ai-card"><h3>🤖 AI Explanation</h3><p>{summary}</p></div>',
+            st.markdown(f'<div class="ai-card"><h3>AI Explanation</h3><p>{summary}</p></div>',
                         unsafe_allow_html=True)
             st.markdown(f"### {heading}")
             box = "positive-box" if pred == 1 else "negative-box"
@@ -457,7 +457,7 @@ def main():
                 st.markdown(f'<div class="{box}">• {r}</div>', unsafe_allow_html=True)
             st.markdown(f"### {skill_h}")
             for s in skills:
-                st.markdown(f'<div class="skill-box">🎯 {s}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="skill-box">• {s}</div>', unsafe_allow_html=True)
 
             st.markdown("---")
             with st.expander("View Input Summary"):
@@ -465,13 +465,13 @@ def main():
 
     # ── Tab 2: Model Comparison ────────────────────────────────────────────────
     with tab2:
-        st.header("📊 Model Comparison Dashboard")
+        st.header("Model Comparison Dashboard")
         results = get_model_results()
 
         if not results.empty:
             champion = results.iloc[0]["Model"]
             st.markdown(f"**Champion Model:** {champion} "
-                        f'<span class="champion-badge">🏆 Best F1</span>', unsafe_allow_html=True)
+                        f'<span class="champion-badge">Best F1</span>', unsafe_allow_html=True)
             st.dataframe(results.style.highlight_max(subset=["F1 Score", "Accuracy"], color="#d1fae5"),
                          use_container_width=True)
 
@@ -509,7 +509,7 @@ def main():
 
     # ── Tab 3: EDA & Charts ────────────────────────────────────────────────────
     with tab3:
-        st.header("🔬 Exploratory Data Analysis")
+        st.header("Exploratory Data Analysis")
         df = load_dataset()
 
         c1, c2 = st.columns(2)
