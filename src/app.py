@@ -22,14 +22,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-DATASET_PATH = "dataset/Placement_Data_Full_Class.csv"
+DATASET_PATH = "data/raw/Placement_Data_Full_Class.csv"
 CHARTS_DIR   = Path("charts")
 
 MODELS = {
     "Random Forest":       "models/random_forest_model.pkl",
     "Logistic Regression": "models/logistic_regression_pipeline.pkl",
     "Decision Tree":       "models/decision_tree_model.pkl",
-    "Naive Bayes":         "placement_model.pkl",
+    "Naive Bayes":         "models/placement_model.pkl",
+    "SVM":                 "models/svm_tuned.joblib",
 }
 
 # ── Page config ────────────────────────────────────────────────────────────────
@@ -155,6 +156,8 @@ def get_model_results():
         try:
             m = joblib.load(path)
             yp = m.predict(X_test)
+            if len(yp) > 0 and isinstance(yp[0], str):
+                yp = [1 if str(p).lower() == "placed" else 0 for p in yp]
             rows.append({
                 "Model": name,
                 "Accuracy":  round(accuracy_score(y_test, yp), 4),
@@ -367,6 +370,8 @@ def main():
             model = load_model(model_choice)
             try:
                 pred = model.predict(input_df)[0]
+                if isinstance(pred, str):
+                    pred = 1 if pred.lower() == "placed" else 0
                 prob = model.predict_proba(input_df)[0][1]
             except Exception as e:
                 st.error(f"Prediction error: {e}")
